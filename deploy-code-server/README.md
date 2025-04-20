@@ -1,5 +1,9 @@
 # These scripts deploy code server to a remote server via scp and ssh.
 
+This has been tested on DigitalOcean Droplet with Ubuntu 24.10
+
+Note that you may still get errors due to limitations of self-signed cert. The editor, terminal, and basic file browsing should still work — but WebViews and clipboard may not work reliably unless caddy is reconfigured with a domain name instead of an IP address.
+
 ## Usage
 
 ```bash
