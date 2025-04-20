@@ -10,7 +10,7 @@ I am setting a theme I like in the set-up-theme.sh script, by overwriting code-s
 ## Usage
 
 ```bash
-./deploy-code-server.sh root@IP [PORT] [PASSWORD]
+./deploy-code-server.sh root@IP [--port <PORT>] [--password <PASSWORD>]
 ```
 
 ## Notes

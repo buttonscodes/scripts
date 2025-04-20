@@ -1,13 +1,50 @@
 #!/bin/bash
+set -e
 
-# Usage: ./deploy-code-server.sh root@IP [PORT] [PASSWORD]
+# Usage: ./deploy-code-server.sh root@IP [--port PORT] [--password PASSWORD]
 
-REMOTE="$1"
-PORT="${2:-8080}"
-PASSWORD="${3:-changeme123}"
 SCRIPT_NAME="install-code-server.sh"
 CADDY_SCRIPT_NAME="setup-caddy-selfsigned.sh"
 THEME_SCRIPT_NAME="set-up-theme.sh"
+
+# Extract remote host as first argument
+REMOTE="$1"
+shift
+
+if [[ -z "$REMOTE" ]]; then
+  echo "Usage: $0 user@host [--port <port>] [--password <password>]"
+  exit 1
+fi
+
+# Defaults
+PORT="8080"
+PASSWORD="changeme123"
+
+# Parse named args
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --port)
+      PORT="$2"
+      shift 2
+      ;;
+    --password)
+      PASSWORD="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Usage: $0 [--port <port>] [--password <password>]"
+      exit 1
+      ;;
+  esac
+done
+
+# Validate PORT (if specified)
+if ! [[ "$PORT" =~ ^[0-9]+$ ]] || [ "$PORT" -lt 1 ] || [ "$PORT" -gt 65535 ]; then
+  echo "Invalid port: '$PORT'. Must be a number between 1 and 65535."
+  exit 1
+fi
+
 
 if [ -z "$REMOTE" ]; then
   echo "Usage: $0 user@host [port] [password]"
