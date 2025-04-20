@@ -24,4 +24,8 @@ setup-caddy-selfsigned.sh script runs on the remote and sets up a self-signed HT
 
 set-up-theme.sh script runs on the remote and sets up a default theme for code-server
 
+install-extensions.sh script runs on the remote and installs extensions for code-server (for now the Docker extension)
+
 Setting up the HTTPS proxy is optional, but recommended for security and ease of use. Since HTTPS proxy is self-signed, you may need to click through a browser warning (self-signed cert).
+
+Note that the Docker Explorer icon is virtually invisible with Abyss theme, but it is there. I was very confused at first. Click on the empty space or look very close (or choose a different theme).
