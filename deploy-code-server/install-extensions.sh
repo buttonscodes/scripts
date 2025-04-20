@@ -1,3 +1,5 @@
+#!/bin/bash
+
 EXTENSIONS=(
   ms-azuretools.vscode-docker
 )

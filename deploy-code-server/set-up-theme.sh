@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "[*] Setting default theme..."
 mkdir -p ~/.local/share/code-server/User
 

@@ -1,12 +1,13 @@
 #!/bin/bash
 set -e
 
-# Usage: ./deploy-code-server.sh root@IP [--port PORT] [--password PASSWORD]
+# Usage: ./deploy-code-server.sh root@IP [--port PORT] [--password PASSWORD] [--name NAME] [--email EMAIL]
 
 SCRIPT_NAME="install-code-server.sh"
 THEME_SCRIPT_NAME="set-up-theme.sh"
 DOCKER_SCRIPT_NAME="install-docker.sh"
 EXTENSIONS_SCRIPT_NAME="install-extensions.sh"
+GIT_SCRIPT_NAME="setup-git.sh"
 CADDY_SCRIPT_NAME="setup-caddy-selfsigned.sh"
 
 
@@ -15,7 +16,7 @@ REMOTE="$1"
 shift
 
 if [[ -z "$REMOTE" ]]; then
-  echo "Usage: $0 user@host [--port <port>] [--password <password>]"
+  echo "Usage: $0 user@host [--port <port>] [--password <password>] [--name <name>] [--email <email>]"
   exit 1
 fi
 
@@ -34,9 +35,17 @@ while [[ $# -gt 0 ]]; do
       PASSWORD="$2"
       shift 2
       ;;
+    --name)
+      NAME="$2"
+      shift 2
+      ;;
+    --email)
+      EMAIL="$2"
+      shift 2
+      ;;
     *)
       echo "Unknown option: $1"
-      echo "Usage: $0 [--port <port>] [--password <password>]"
+      echo "Usage: $0 [--port <port>] [--password <password>] [--name <name>] [--email <email>]"
       exit 1
       ;;
   esac
@@ -69,6 +78,9 @@ scp "$DOCKER_SCRIPT_NAME" "$REMOTE:/root/$DOCKER_SCRIPT_NAME"
 echo "[*] Copying extensions script to $REMOTE..."
 scp "$EXTENSIONS_SCRIPT_NAME" "$REMOTE:/root/$EXTENSIONS_SCRIPT_NAME"
 
+echo "[*] Copying git script to $REMOTE..."
+scp "$GIT_SCRIPT_NAME" "$REMOTE:/root/$GIT_SCRIPT_NAME" 
+
 echo "[*] Copying caddy script to $REMOTE..."
 scp "$CADDY_SCRIPT_NAME" "$REMOTE:/root/$CADDY_SCRIPT_NAME" 
 
@@ -86,6 +98,15 @@ ssh "$REMOTE" "bash /root/$DOCKER_SCRIPT_NAME"
 echo "[*] Setting up extensions for code-server on $REMOTE"
 ssh "$REMOTE" "bash /root/$EXTENSIONS_SCRIPT_NAME"
 
+# Check if both are non-empty before configuring git
+if [[ -n "$GIT_NAME" && -n "$GIT_EMAIL" ]]; then
+  echo "[*] Setting up git on $REMOTE"
+  ssh "$REMOTE" "bash /root/$GIT_SCRIPT_NAME $GIT_NAME $GIT_EMAIL"
+else
+    echo "[*] Skipping git config – name or email not provided."
+fi
+
 echo "[*] Setting up https self-signed with caddy on $REMOTE"
 ssh "$REMOTE" "bash /root/$CADDY_SCRIPT_NAME $PORT"
+
 
