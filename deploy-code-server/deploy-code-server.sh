@@ -36,11 +36,11 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --name)
-      NAME="$2"
+      GIT_NAME="$2"
       shift 2
       ;;
     --email)
-      EMAIL="$2"
+      GIT_EMAIL="$2"
       shift 2
       ;;
     *)
